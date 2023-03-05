@@ -1,4 +1,4 @@
 a.out
 .vscode/
-/cmake-build-debug/
+/cmake-build-*/
 .idea/

@@ -2,8 +2,29 @@
 
 #include <stdint.h>
 #include <endian.h/endian.h>
+#include <climits>
 
 namespace _endian_ {
+
+
+template <typename T>
+T swap_endian(T u) //https://stackoverflow.com/a/4956493
+{
+    static_assert (CHAR_BIT == 8, "CHAR_BIT != 8");
+
+    union
+    {
+        T u;
+        unsigned char u8[sizeof(T)];
+    } source, dest;
+
+    source.u = u;
+
+    for (size_t k = 0; k < sizeof(T); k++)
+        dest.u8[k] = source.u8[sizeof(T) - k - 1];
+
+    return dest.u;
+}
 
 bool is_little_endian(){
 #ifdef BYTE_ORDER
@@ -43,17 +64,28 @@ struct _E_Base{
         if(IsSameEndian(e)){
             this->val = x;
         } else {
-            this->val = _swapOrder(x);
+            this->val = swap_endian(x);
         }
     }
 
-    template<typename otherType>    
-    operator otherType() const{
+    operator T() const{
         if(IsSameEndian(e)){
             return this->val;
         } else {
-            return _swapOrder(this->val);
+            return swap_endian(this->val);
         }
+    }
+
+    template<typename other>
+    operator _E_Base<other, Endian::eBIG_ENDIAN>() const {
+        _E_Base<other, Endian::eBIG_ENDIAN> temp = static_cast<T>(*this);
+        return temp;
+    }
+
+    template<typename other>
+    operator _E_Base<other, Endian::eLITTLE_ENDIAN>() const {
+        _E_Base<other, Endian::eLITTLE_ENDIAN> temp = static_cast<T>(*this);
+        return temp;
     }
 
     _E_Base& operator++(){
