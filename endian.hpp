@@ -4,21 +4,16 @@
 #include <climits>
 #include <bit>
 
-#if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__))
-    #include <sys/param.h>
-#endif
-
 #if defined(__linux__) || defined(__CYGWIN__)
     #include <endian.h>
 #endif
 
 #ifndef __cpp_lib_endian
 namespace std {
-enum class endian{
-    big,
-    little,
-    native
-};
+    enum class endian{
+        big,
+        little
+    };
 }
 #else
 static_assert(
