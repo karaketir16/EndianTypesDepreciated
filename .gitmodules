@@ -1,3 +1,0 @@
-[submodule "endian.h"]
-	path = endian.h
-	url = git@github.com:mikepb/endian.h.git

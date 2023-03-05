@@ -1,8 +1,38 @@
 #pragma once
 
-#include <stdint.h>
-#include <endian.h/endian.h>
+#include <cstdint>
 #include <climits>
+#include <bit>
+
+#if (defined(_WIN16) || defined(_WIN32) || defined(_WIN64) || defined(__WINDOWS__))
+    #include <sys/param.h>
+#endif
+
+#if defined(__linux__) || defined(__CYGWIN__)
+    #include <endian.h>
+#endif
+
+#ifndef __cpp_lib_endian
+namespace std {
+enum class endian{
+    big,
+    little,
+    native
+};
+}
+#else
+static_assert(
+        (std::endian::native == std::endian::big) ||
+        (std::endian::native == std::endian::little)
+        , "byte order must be little or big");
+#endif
+
+#ifdef BYTE_ORDER
+#if (BYTE_ORDER == BIG_ENDIAN) || (BYTE_ORDER == BIG_ENDIAN)
+#error "byte order must be little or big"
+#endif
+#endif
+
 
 namespace _endian_ {
 
@@ -27,29 +57,27 @@ T swap_endian(T u) //https://stackoverflow.com/a/4956493
 }
 
 bool is_little_endian(){
-#ifdef BYTE_ORDER
+#ifdef __cpp_lib_endian
+    return std::endian::native == std::endian::little;
+#elif defined(BYTE_ORDER)
     return BYTE_ORDER == LITTLE_ENDIAN;
 #else
     int x = 1;
     char *c = reinterpret_cast<char*>(&x);
     return c[0];
+
 #endif
 }
 
 
-enum class Endian{
-    eBIG_ENDIAN,
-    eLITTLE_ENDIAN
-};
-
-bool IsSameEndian(Endian e){
+bool IsSameEndian(std::endian e){
     static const bool is_le = is_little_endian(); 
     switch (e)
     {
-    case Endian::eBIG_ENDIAN:
+    case std::endian::big:
         return !is_le;
         break;
-    case Endian::eLITTLE_ENDIAN:
+    case std::endian::little:
         return is_le;
         break;
     }
@@ -57,7 +85,7 @@ bool IsSameEndian(Endian e){
 };
 
 
-template<typename T, Endian e>
+template<typename T, std::endian e>
 struct _E_Base{
 
     _E_Base(const T& x = 0){
@@ -77,14 +105,14 @@ struct _E_Base{
     }
 
     template<typename other>
-    operator _E_Base<other, Endian::eBIG_ENDIAN>() const {
-        _E_Base<other, Endian::eBIG_ENDIAN> temp = static_cast<T>(*this);
+    operator _E_Base<other, std::endian::big>() const {
+        _E_Base<other, std::endian::big> temp = static_cast<T>(*this);
         return temp;
     }
 
     template<typename other>
-    operator _E_Base<other, Endian::eLITTLE_ENDIAN>() const {
-        _E_Base<other, Endian::eLITTLE_ENDIAN> temp = static_cast<T>(*this);
+    operator _E_Base<other, std::endian::little>() const {
+        _E_Base<other, std::endian::little> temp = static_cast<T>(*this);
         return temp;
     }
 
@@ -166,8 +194,8 @@ protected:
 
 
 #define _CREATE_ENDIAN_TYPE(x) \
-typedef _endian_::_E_Base<x, _endian_::Endian::eBIG_ENDIAN> be_##x;\
-typedef _endian_::_E_Base<x, _endian_::Endian::eLITTLE_ENDIAN> le_##x;
+typedef _endian_::_E_Base<x, std::endian::big> be_##x;\
+typedef _endian_::_E_Base<x, std::endian::little> le_##x;
 
 
 }

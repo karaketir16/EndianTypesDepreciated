@@ -4,7 +4,7 @@ Create integers and floating point numbers with specific endiannes.
 
 These types can be used as normal C++ number types. I mean, supports for arithmetic and assignment operators. Can be converted to each others(and default types) with implicit conversions.
 
-## Big endian types
+## Big _endian_ types
 ```
 be_int8_t
 be_int16_t
@@ -20,7 +20,7 @@ be_float
 be_double
 ```
 
-## Little endian types
+## Little _endian_ types
 ```
 le_int8_t
 le_int16_t
