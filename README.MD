@@ -8,7 +8,7 @@ These types can be used as normal C++ number types. I mean, supports for arithme
 ```
 be_int8_t
 be_int16_t
-be_int32_t
+be
 be_int64_t
 
 be_uint8_t

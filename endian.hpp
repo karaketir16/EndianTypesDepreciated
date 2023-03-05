@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdint.h>
-#include <endian.h>
+#include <endian.h/endian.h>
 
 namespace _endian_ {
 
@@ -15,22 +15,6 @@ bool is_little_endian(){
 #endif
 }
 
-template<typename T>
-void _swap(T& a, T& b){
-    T temp = a;
-    a = b;
-    b = temp;
-}
-
-template<typename T>
-T _swapOrder(const T& y){
-    T res = y;
-    char *c = reinterpret_cast<char*>(&res);
-    for(size_t i = 0; i < sizeof(T) / 2; i++){
-        _swap(c[i], c[sizeof(T) - i - 1]);
-    }
-    return res;
-}
 
 enum class Endian{
     eBIG_ENDIAN,
