@@ -1,4 +1,7 @@
-# C++ Data Type with Endianness
+# Depreciated
+The new version of this repository: https://github.com/karaketir16/EndianLib
+
+## C++ Data Type with Endianness
 
 Create integers and floating point numbers with specific endiannes.
 
